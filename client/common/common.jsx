@@ -20,7 +20,7 @@ const processStatus = response => {
   }
 }
 
-const f = (url, method, callback) => {
+const f = (method, url, callback) => {
   fetch(url, { method: method, credentials: 'include' })
     .then(processStatus)
     .then(response => response.json())

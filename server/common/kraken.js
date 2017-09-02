@@ -16,4 +16,19 @@ const kraFetch = async pairs => {
   }
 }
 
-export default kraFetch
+const kraTime = async () => {
+  try {
+    // Get Server Time
+    const time = await kraken.api('Time')
+    return time
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+const kraFunc = {
+  kraTime: kraTime,
+  kraFetch: kraFetch
+}
+
+export default kraFunc
