@@ -29,6 +29,16 @@ const routes = app => {
     .route('/api/ar/:pair')
     .post(pairController.addPair)
     .delete(pairController.removePair)
+
+  app.route('/api/data/:pair/:dataArr').post((req, res) => {
+    console.log(req.params.dataArr)
+    console.log(typeof req.params.dataArr)
+    res.json(
+      'Received data: [' + req.params.dataArr + '] for ' + req.params.pair
+    )
+
+    //Now save this data to the db
+  })
 }
 
 export default routes

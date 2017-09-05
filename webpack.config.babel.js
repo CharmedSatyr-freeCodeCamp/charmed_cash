@@ -1,8 +1,9 @@
 /*** PACKAGES ***/
-const HTMLWebpackPlugin = require('html-webpack-plugin')
-const webpack = require('webpack')
+import HTMLWebpackPlugin from 'html-webpack-plugin'
+import webpack from 'webpack'
 
-require('dotenv').load()
+import dotenv from 'dotenv'
+dotenv.load()
 
 const PROD = process.env.NODE_ENV === 'production'
 
@@ -79,4 +80,4 @@ const client = {
 }
 */
 
-module.exports = client /* , server*/
+export default client /* , server*/
