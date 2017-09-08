@@ -25,6 +25,7 @@ app.engine('html', (path, option, cb) => {})
 
 /*** MIDDLEWARE ***/
 app.use('/js', express.static(path + '/dist/js')) //The first argument creates the virtual directory used in index.html
+app.use('/styles', express.static(path + '/dist/styles'))
 
 /*** MONGOOSE ***/
 import mongoose from 'mongoose'

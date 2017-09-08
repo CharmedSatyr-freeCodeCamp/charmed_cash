@@ -1,10 +1,12 @@
 /*** PACKAGES ***/
+import CompressionPlugin from 'compression-webpack-plugin'
+import dotenv from 'dotenv'
+import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import HTMLWebpackPlugin from 'html-webpack-plugin'
 import webpack from 'webpack'
 
-import dotenv from 'dotenv'
+/*** TOOLS ***/
 dotenv.load()
-
 const PROD = process.env.NODE_ENV === 'production'
 
 /*** COMMON PLUGINS ***/
@@ -13,6 +15,17 @@ const defineConfig = new webpack.DefinePlugin({
     NODE_ENV: JSON.stringify(process.env.NODE_ENV)
   }
 })
+
+const compConfig = new CompressionPlugin({
+  asset: '[path].gz[query]',
+  test: /\.(js|html|css|json|ico|eot|otf|ttf)$/, //Defaults to all plugins, but using this: https://www.fastly.com/blog/new-gzip-settings-and-deciding-what-compress/
+  algorithm: 'gzip',
+  threshold: 10240,
+  minRatio: 0.8,
+  deleteOriginalAssets: false
+})
+
+const uglyConfig = new webpack.optimize.UglifyJsPlugin()
 
 /*** CLIENT CONFIG ***/
 const client = {
@@ -28,6 +41,27 @@ const client = {
         options: {
           presets: ['env', 'react']
         }
+      },
+      {
+        test: /\.(css|sass|scss)$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          publicPath: '../', //The Plugin assumes css is in the same directory as the html by default (?) and redoes paths!
+          use: [
+            {
+              loader: 'css-loader',
+              options: {
+                minimize: PROD ? true : false
+              }
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                minimize: PROD ? true : false
+              }
+            }
+          ]
+        })
       }
     ]
   },
@@ -35,15 +69,33 @@ const client = {
     path: __dirname + '/dist',
     filename: PROD ? 'js/client.bundle.min.js' : 'js/client.bundle.js'
   },
-  plugins: [
-    defineConfig,
-    new HTMLWebpackPlugin({
-      title: 'Charmed Cash',
-      template: __dirname + '/client/' + 'index.html',
-      filename: __dirname + '/dist/' + 'index.html',
-      inject: 'body'
-    })
-  ]
+  plugins: PROD
+    ? [
+        new HTMLWebpackPlugin({
+          title: 'Charmed Cash',
+          template: __dirname + '/client/' + 'index.html',
+          filename: __dirname + '/dist/' + 'index.html',
+          inject: 'body'
+        }),
+        new ExtractTextPlugin({
+          filename: 'styles/[name]+[sha256:contenthash:base64:5].min.css'
+        }),
+        defineConfig,
+        uglyConfig,
+        compConfig
+      ]
+    : [
+        new HTMLWebpackPlugin({
+          title: 'Charmed Cash',
+          template: __dirname + '/client/' + 'index.html',
+          filename: __dirname + '/dist/' + 'index.html',
+          inject: 'body'
+        }),
+        new ExtractTextPlugin({
+          filename: 'styles/[name]+[sha256:contenthash:base64:5].css'
+        }),
+        defineConfig
+      ]
 }
 
 /*** SERVER CONFIG ***/

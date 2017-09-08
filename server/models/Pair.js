@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 
 const Pair = new Schema({
   name: String,
-  data: [Array]
+  data: [[]]
 })
 
 export default mongoose.model('Pair', Pair)

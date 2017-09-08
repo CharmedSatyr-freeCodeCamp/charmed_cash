@@ -55,5 +55,41 @@ export default class PairController {
         res.json(result)
       })
     }
+
+    //Saves data points for a pair
+    this.saveData = (req, res) => {
+      //Convert dataArr into a proper array of numbers
+      const dataArr = req.params.dataArr
+        .split(',')
+        .map(item => parseFloat(item))
+      const pair = req.params.pair
+
+      //Find a pair
+      Pair.findOne({
+        name: pair
+      }).exec((err, result) => {
+        if (err) {
+          console.error(err)
+        }
+        if (result) {
+          //Deduplicate for same time/value points
+          const temp = result.data
+          temp.push(dataArr)
+          const uniq = a => Array.from(new Set(a)) //Deduplicate
+          result.data = uniq(temp)
+          //Save
+          result.save(err => {
+            if (err) {
+              console.error(err)
+            }
+            //Send response
+            res.json('Saving: ' + pair + ': ' + dataArr)
+          })
+        } else {
+          //Pair doesn't exist (has been recently deleted, etc.)
+          res.json('Received data for nonexistent pair ' + pair + '...')
+        }
+      })
+    }
   }
 }

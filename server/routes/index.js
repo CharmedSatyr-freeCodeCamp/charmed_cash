@@ -1,12 +1,11 @@
 'use strict'
-
 const path = process.cwd()
 const DEV = process.env.NODE_ENV === 'development'
 
 import PairController from '../controllers/pairController.js'
 const pairController = new PairController()
 
-import kraFunc from '../common/kraken.js'
+import kraFunc from '../controllers/krakenController.js'
 
 const routes = app => {
   app.route('/').get((req, res) => {
@@ -30,15 +29,7 @@ const routes = app => {
     .post(pairController.addPair)
     .delete(pairController.removePair)
 
-  app.route('/api/data/:pair/:dataArr').post((req, res) => {
-    console.log(req.params.dataArr)
-    console.log(typeof req.params.dataArr)
-    res.json(
-      'Received data: [' + req.params.dataArr + '] for ' + req.params.pair
-    )
-
-    //Now save this data to the db
-  })
+  app.route('/api/data/:pair/:dataArr').post(pairController.saveData)
 }
 
 export default routes
