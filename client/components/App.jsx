@@ -80,7 +80,8 @@ export default class App extends Component {
       time: '',
       tickers: '',
       chartData: [],
-      toggleArr: []
+      toggleArr: [],
+      warning: ''
     }
     this.handleSubmit = this.handleSubmit.bind(this)
     this.getTickers = this.getTickers.bind(this)
@@ -92,11 +93,19 @@ export default class App extends Component {
   handleSubmit() {
     //Submit and start following a new trading pair
     const pair = document.getElementById('pairEntry').value
-    const regex = /[A-Z]{6,8}\.?d?/i
-    pair.match(regex)
-      ? this.addTicker(pair)
-      : console.log('Something is wrong with the entry. No pairs added.')
+
+    //Check Kraken to see if it's a valid pair before adding to DB
+    common.f('GET', '/api/kraFetch/' + pair, response => {
+      if (response.result) {
+        this.addTicker(pair)
+        this.setState({ warning: ' ' + pair + ' added.' })
+      } else {
+        this.setState({ warning: ' Please check your input...' })
+        console.log('Something is wrong with the entry. No pairs added.')
+      }
+    })
   }
+
   time() {
     common.f('GET', '/api/kraTime', response => {
       this.setState({ time: response.result.rfc1123 })
@@ -130,35 +139,40 @@ export default class App extends Component {
     const tickerArr = this.state.tickers.split(',')
     if (tickerArr.length > 1) {
       //Query Kraken for current data about the tickers
-      common.f('GET', '/api/kraFetch/' + this.state.tickers, response => {
-        //Get the time
-        common.f('GET', '/api/kraTime', time => {
-          let ut = time.result.unixtime
+      common.f(
+        'GET',
+        '/api/kraFetch/' + this.state.tickers,
+        response => {
+          //Get the time
+          common.f('GET', '/api/kraTime', time => {
+            let ut = time.result.unixtime
 
-          //Iterate through tickers we're following as keys for the kraFetch response object
-          tickerArr.map(item => {
-            //Create an array of format [unixtime, lasttrade] to save in the db
-            let dataPoint = []
-            let lt = parseFloat(response.result[item].c[0])
-            dataPoint.push(ut, lt)
-            //console.log(item + ':', dataPoint)
+            //Iterate through tickers we're following as keys for the kraFetch response object
+            tickerArr.map(item => {
+              //Create an array of format [unixtime, lasttrade] to save in the db
+              let dataPoint = []
+              let lt = parseFloat(response.result[item].c[0])
+              dataPoint.push(ut, lt)
+              //console.log(item + ':', dataPoint)
 
-            //Send the datapoint to the database
-            common.f(
-              'POST',
-              '/api/data/' + item + '/' + dataPoint,
-              response => {
-                //console.log(response)
-              }
-            )
+              //Send the datapoint to the database
+              common.f(
+                'POST',
+                '/api/data/' + item + '/' + dataPoint,
+                response => {
+                  //console.log(response)
+                }
+              )
+            })
           })
-        })
-      })
+        },
+        this.setState({ warning: '' }) //Occasionally clear warning area
+      )
     }
   }
   addTicker(pair) {
     common.f('POST', '/api/ar/' + pair, response => {
-      //console.log(response)
+      console.log(response)
       this.getTickers()
     })
   }
@@ -171,8 +185,7 @@ export default class App extends Component {
   makeToggles() {
     //Create the toggles
     //Baked in pairs
-    const bakedIn =
-      'XZECZUSD,XXBTZUSD,XETHZUSD,XXBTZEUR,XETHZXBT,XETHZEUR,XETCZETH,XETCZUSD,XETCZEUR,XREPZXBT,XREPZETH,XREPZEUR'
+    const bakedIn = 'XXBTZUSD,XETHZUSD,XZECZUSD'
     //Dynamic pairs
     const dynamic = this.state.tickers
     //Both
@@ -225,8 +238,8 @@ export default class App extends Component {
         <div>
           <label htmlFor="pairEntry">
             <h3>
-              Enter a custom{' '}
-              <a href="https://www.kraken.com/help/fees">
+              Enter a {' '}
+              <a href="https://www.kraken.com/help/fees" target="_blank">
                 Kraken.com trading pair
               </a>{' '}
               (e.g., DASHUSD)
@@ -237,6 +250,7 @@ export default class App extends Component {
               type="text"
             />
             <button onClick={this.handleSubmit}>POST</button>
+            {this.state.warning}
           </label>
           <br />
           <h3>Or toggle a currency pair below: </h3>

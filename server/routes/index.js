@@ -12,6 +12,10 @@ const routes = app => {
     res.sendFile(path + '/dist/index.html')
   })
 
+  app.route('/api/kraFetch/').get((req, res) => {
+    res.json('No trading pair submitted...')
+  })
+
   app.route('/api/kraFetch/:pairStr').get(async (req, res) => {
     const results = await kraFunc.kraFetch(req.params.pairStr)
     res.json(results)

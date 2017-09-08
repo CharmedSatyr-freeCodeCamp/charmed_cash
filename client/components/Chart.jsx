@@ -4,6 +4,7 @@
 import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import ReactHighstock from 'react-highcharts/ReactHighstock.src'
+import moment from 'moment'
 
 /*** FUNCTIONS ***/
 import common from '../controllers/common.jsx'
@@ -23,6 +24,9 @@ const HighchartsJS = ({ data }) => {
 
   //Highcharts config
   const config = {
+    xAxis: {
+      type: 'datetime'
+    },
     rangeSelector: {
       selected: 1
     },

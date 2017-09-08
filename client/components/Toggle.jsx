@@ -2,7 +2,6 @@
 
 /*** PACKAGES ***/
 import React, { Component } from 'react'
-import { render } from 'react-dom'
 import Switch from 'react-toggle-switch'
 
 /*** FUNCTIONS ***/

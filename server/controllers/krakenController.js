@@ -12,7 +12,7 @@ const kraFetch = async pairs => {
     const ticker = await kraken.api('Ticker', { pair: pairs })
     return ticker
   } catch (err) {
-    console.error(err)
+    return err
   }
 }
 
@@ -22,6 +22,7 @@ const kraTime = async () => {
     const time = await kraken.api('Time')
     return time
   } catch (err) {
+    return err
     console.error(err)
   }
 }
