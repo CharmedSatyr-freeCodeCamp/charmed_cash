@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import HTMLWebpackPlugin from 'html-webpack-plugin'
 import webpack from 'webpack'
+import nodeExternals from 'webpack-node-externals'
 
 /*** TOOLS ***/
 dotenv.load()
@@ -99,8 +100,12 @@ const client = {
 }
 
 /*** SERVER CONFIG ***/
-/*const server = {
+const server = {
   entry: ['babel-polyfill', __dirname + '/server/server.js'],
+  output: {
+    path: __dirname + '/dist',
+    filename: PROD ? 'server.bundle.min.js' : 'server.bundle.js'
+  },
   devtool: PROD ? false : 'source-map',
   module: {
     rules: [
@@ -114,22 +119,17 @@ const client = {
       }
     ]
   },
-  node: {
+  target: 'node',
+  /*  node: {
     console: false,
     global: false,
     process: false,
     Buffer: false,
     __filename: false,
     __dirname: false
-  },
-  output: {
-    path: __dirname + '/server',
-    filename: PROD ? 'server.bundle.min.js' : 'server.bundle.js'
-  },
-  target: 'node',
+  },*/
   externals: [nodeExternals()],
   plugins: PROD ? [defineConfig, compConfig, uglyConfig] : [defineConfig]
 }
-*/
 
-export default client /* , server*/
+export default [client, server]

@@ -20,7 +20,6 @@ const routes = app => {
     const results = await kraFunc.kraFetch(req.params.pairStr)
     res.json(results)
   })
-
   app.route('/api/kraTime').get(async (req, res) => {
     const time = await kraFunc.kraTime()
     res.json(time)

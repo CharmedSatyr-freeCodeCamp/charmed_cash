@@ -1,66 +1,5 @@
 'use strict'
 
-/*
-const (
-  BCHEUR   = "BCHEUR"
-	BCHUSD   = "BCHUSD"
-	BCHXBT   = "BCHXBT"
-	DASHEUR  = "DASHEUR"
-	DASHUSD  = "DASHUSD"
-	DASHXBT  = "DASHXBT"
-	EOSETH   = "EOSETH"
-	EOSEUR   = "EOSEUR"
-	EOSUSD   = "EOSUSD"
-	EOSXBT   = "EOSXBT"
-	GNOETH   = "GNOETH"
-	GNOEUR   = "GNOEUR"
-	GNOUSD   = "GNOUSD"
-	GNOXBT   = "GNOXBT"
-	USDTZUSD = "USDTZUSD"
-	XETCXETH = "XETCXETH"
-	XETCXXBT = "XETCXXBT"
-	XETCZEUR = "XETCZEUR"
-	XETCXUSD = "XETCXUSD"
-	XETHXXBT = "XETHXXBT"
-	XETHZCAD = "XETHZCAD"
-	XETHZEUR = "XETHZEUR"
-	XETHZGBP = "XETHZGBP"
-	XETHZJPY = "XETHZJPY"
-	XETHZUSD = "XETHZUSD"
-	XICNXETH = "XICNXETH"
-	XICNXXBT = "XICNXXBT"
-	XLTCXXBT = "XLTCXXBT"
-	XLTCZEUR = "XLTCZEUR"
-	XLTCZUSD = "XLTCZUSD"
-	XMLNXETH = "XMLNXETH"
-	XMLNXXBT = "XMLNXXBT"
-	XREPXETH = "XREPXETH"
-	XREPXXBT = "XREPXXBT"
-	XREPZEUR = "XREPZEUR"
-	XREPZUSD = "XREPZUSD"
-	XXBTZCAD = "XXBTZCAD"
-	XXBTZEUR = "XXBTZEUR"
-	XXBTZGBP = "XXBTZGBP"
-	XXBTZJPY = "XXBTZJPY"
-	XXBTZUSD = "XXBTZUSD"
-	XXDGXXBT = "XXDGXXBT"
-	XXLMXXBT = "XXLMXXBT"
-	XXLMZEUR = "XXLMZEUR"
-	XXLMZUSD = "XXLMZUSD"
-	XXMRXXBT = "XXMRXXBT"
-	XXMRZEUR = "XXMRZEUR"
-	XXMRZUSD = "XXMRZUSD"
-	XXRPXXBT = "XXRPXXBT"
-	XXRPZCAD = "XXRPZCAD"
-	XXRPZEUR = "XXRPZEUR"
-	XXRPZJPY = "XXRPZJPY"
-	XXRPZUSD = "XXRPZUSD"
-	XZECXXBT = "XZECXXBT"
-	XZECZEUR = "XZECZEUR"
-	XZECZUSD = "XZECZUSD"
-)
-*/
-
 /*** PACKAGES ***/
 import React, { Component } from 'react'
 
@@ -68,8 +7,9 @@ import React, { Component } from 'react'
 import HighchartsJS from './Chart.jsx'
 import Toggle from './Toggle.jsx'
 
-/*** FUNCTIONS ***/
+/*** CONTROLLERS ***/
 import common from '../controllers/common.jsx'
+import socketFuncs from '../controllers/io.client.jsx'
 
 /*** MAIN ***/
 export default class App extends Component {
@@ -83,13 +23,18 @@ export default class App extends Component {
       toggleArr: [],
       warning: ''
     }
+    //    subscribeToTimer((err, timestamp) =>
+    //    this.setState({
+    //    timestamp
+    //  })
+    //)
+
     this.handleSubmit = this.handleSubmit.bind(this)
     this.getTickers = this.getTickers.bind(this)
     this.addTicker = this.addTicker.bind(this)
     this.deleteTicker = this.deleteTicker.bind(this)
     this.makeToggles = this.makeToggles.bind(this)
   }
-
   handleSubmit() {
     //Submit and start following a new trading pair
     const pair = document.getElementById('pairEntry').value
@@ -171,12 +116,16 @@ export default class App extends Component {
     }
   }
   addTicker(pair) {
+    socketFuncs.addTickerWS(pair)
+
     common.f('POST', '/api/ar/' + pair, response => {
       console.log(response)
       this.getTickers()
     })
   }
   deleteTicker(xpair) {
+    socketFuncs.removeTickerWS(xpair)
+
     common.f('DELETE', '/api/ar/' + xpair, response => {
       //console.log(response)
       this.getTickers()
@@ -219,21 +168,18 @@ export default class App extends Component {
   render() {
     return (
       <div>
-        <h1>
-          Charmed Cash
+        <h1>Charmed Cash</h1>
+        <h6>
+          a realtime* digital currency ticker tracker | data from Kraken.com
           <br />
           <small>
-            a realtime* digital currency ticker tracker | data from Kraken.com
-            <h6>
-              *i realized most of the way through that the Kraken API doesn't
-              provide straightforward access to historical data, so you'll have
-              to wait to accumulate some. this project was really just an chance
-              to practice using web sockets anyway... in this case, that means
-              that others' browsers will show your ticker toggles without a
-              refresh
-            </h6>
+            *i realized most of the way through that the Kraken API doesn't
+            provide straightforward access to historical data, so you'll have to
+            wait to accumulate some. this project was really just an chance to
+            practice using web sockets anyway... in this case, that means that
+            others' browsers will show your ticker toggles without a refresh
           </small>
-        </h1>
+        </h6>
         <HighchartsJS data={this.state.chartData} />
         <div>
           <label htmlFor="pairEntry">

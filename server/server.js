@@ -43,8 +43,47 @@ mongoose.connect(process.env.MONGO_URI, { useMongoClient: true }, (err, db) => {
 import routes from './routes/index.js'
 routes(app)
 
-/*** SERVE ***/
-const port = process.env.PORT || 8080
-app.listen(port, () => {
-  console.log('Node.js listening on port', port + '.')
+/*** WEB SOCKETS ***/
+/*import WebSocket from 'ws'
+const ws = new WebSocket('wss://echo.websocket.org/', {
+  origin: 'https://websocket.org'
 })
+ws.on('open', function open() {
+  console.log('connected')
+  ws.send(Date.now())
+})
+ws.on('close', function close() {
+  console.log('disconnected')
+})
+ws.on('message', function incoming(data) {
+  console.log(`Roundtrip time: ${Date.now() - data} ms`)
+  setTimeout(function timeout() {
+    ws.send(Date.now())
+  }, 500)
+})
+*/
+const port = process.env.PORT || 8080
+const server = require('http').createServer(app)
+const io = require('socket.io')(server)
+io.on('connection', client => {
+  console.log('Socket.io connection received...')
+
+  client.on('addTickerWS', pair => {
+    client.emit('logThis', 'Adding ' + pair)
+  })
+
+  client.on('removeTickerWS', pair => {
+    client.emit('logThis', 'Removing ' + pair)
+  })
+})
+
+server.listen(port, () => {
+  console.log('Socket.io listening on port', port + '.')
+})
+
+/*** SERVE ***/
+/*const port = process.env.PORT || 8080
+app.listen(port, () => {
+  console.log('Express.js listening on port', port + '.')
+})
+*/

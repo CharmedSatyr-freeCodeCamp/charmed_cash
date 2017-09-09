@@ -27,6 +27,7 @@ export default class PairController {
         }
       })
     }
+
     //Checks if submitted pair is in else removes the pair
     this.removePair = (req, res) => {
       Pair.findOne(

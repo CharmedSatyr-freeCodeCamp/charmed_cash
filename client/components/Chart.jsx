@@ -25,7 +25,7 @@ const HighchartsJS = ({ data }) => {
   const config = {
     chart: {
       //      animation: false, //Doesn't seem to turn off the animations!
-      backgroundColor: '#000000'
+      backgroundColor: '#ffffff'
     },
     xAxis: {
       type: 'datetime'
