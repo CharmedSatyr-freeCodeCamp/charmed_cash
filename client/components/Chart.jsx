@@ -4,7 +4,6 @@
 import React, { Component } from 'react'
 import ReactHighcharts from 'react-highcharts'
 import ReactHighstock from 'react-highcharts/ReactHighstock.src'
-import moment from 'moment'
 
 /*** FUNCTIONS ***/
 import common from '../controllers/common.jsx'
@@ -24,6 +23,10 @@ const HighchartsJS = ({ data }) => {
 
   //Highcharts config
   const config = {
+    chart: {
+      //      animation: false, //Doesn't seem to turn off the animations!
+      backgroundColor: '#000000'
+    },
     xAxis: {
       type: 'datetime'
     },
