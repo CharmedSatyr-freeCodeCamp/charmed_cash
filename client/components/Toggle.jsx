@@ -18,10 +18,8 @@ export default class Toggle extends Component {
   }
   toggleSwitch() {
     if (this.state.switched) {
-      console.log('Deleting data for ' + this.props.pair + '...')
       this.props.del(this.props.pair)
     } else {
-      console.log('Getting data for ' + this.props.pair + '...')
       this.props.add(this.props.pair)
     }
     this.setState({ switched: !this.state.switched })

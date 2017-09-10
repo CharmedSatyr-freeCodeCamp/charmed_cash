@@ -9,7 +9,7 @@ import Toggle from './Toggle.jsx'
 
 /*** CONTROLLERS ***/
 import common from '../controllers/common.jsx'
-import socketFuncs from '../controllers/io.client.jsx'
+import clientFuncsWS from '../controllers/io.client.jsx'
 
 /*** MAIN ***/
 export default class App extends Component {
@@ -17,18 +17,11 @@ export default class App extends Component {
     super(props)
 
     this.state = {
-      time: '',
       tickers: '',
       chartData: [],
       toggleArr: [],
       warning: ''
     }
-    //    subscribeToTimer((err, timestamp) =>
-    //    this.setState({
-    //    timestamp
-    //  })
-    //)
-
     this.handleSubmit = this.handleSubmit.bind(this)
     this.getTickers = this.getTickers.bind(this)
     this.addTicker = this.addTicker.bind(this)
@@ -37,10 +30,11 @@ export default class App extends Component {
   }
   handleSubmit() {
     //Submit and start following a new trading pair
-    const pair = document.getElementById('pairEntry').value
-
+    const pair = common.prettyTickers(
+      document.getElementById('pairEntry').value
+    )
     //Check Kraken to see if it's a valid pair before adding to DB
-    common.f('GET', '/api/kraFetch/' + pair, response => {
+    clientFuncsWS.kraCheckerWS(pair, response => {
       if (response.result) {
         this.addTicker(pair)
         this.setState({ warning: ' ' + pair + ' added.' })
@@ -50,84 +44,47 @@ export default class App extends Component {
       }
     })
   }
-
-  time() {
-    common.f('GET', '/api/kraTime', response => {
-      this.setState({ time: response.result.rfc1123 })
-    })
-  }
   getTickers() {
     //Get all tickers saved in the database
-    ;(() =>
-      common.f(
-        'GET',
-        '/api/allTickers',
-        allTickers => {
-          //console.log('allTickers:', allTickers) //Logs everything for debug
-          const pairNames = allTickers.map(item => {
-            return common.prettyTickers(item.name)
-          })
-          this.setState({ tickers: pairNames.join(',') })
-          this.makeToggles() // Make the toggles after setting tickers
+    clientFuncsWS.getTickersWS(async allTickers => {
+      //console.log('allTickers:', await allTickers) //Logs everything for debug
+      const pairNames = await allTickers.map(item => {
+        return common.prettyTickers(item.name)
+      })
+      this.setState({ tickers: pairNames.join(',') })
+      this.makeToggles() // Make the toggles after setting tickers
 
-          //Get data points for chart
-          const chartArr = allTickers.map(item => {
-            return [common.prettyTickers(item.name), item.data]
-          })
-          this.setState({ chartData: chartArr })
-        },
-        this.fetchKraData()
-      ))()
+      //Get data points for chart
+      const chartArr = await allTickers.map(item => {
+        return [common.prettyTickers(item.name), item.data]
+      })
+      this.setState({ chartData: chartArr })
+    })
+    this.fetchKraData()
   }
   fetchKraData() {
     //Tickers from state
-    const tickerArr = this.state.tickers.split(',')
-    if (tickerArr.length > 1) {
+    if (this.state.tickers.length) {
       //Query Kraken for current data about the tickers
-      common.f(
-        'GET',
-        '/api/kraFetch/' + this.state.tickers,
+      clientFuncsWS.kraFetchSaveWS(
+        this.state.tickers,
         response => {
-          //Get the time
-          common.f('GET', '/api/kraTime', time => {
-            let ut = time.result.unixtime
-
-            //Iterate through tickers we're following as keys for the kraFetch response object
-            tickerArr.map(item => {
-              //Create an array of format [unixtime, lasttrade] to save in the db
-              let dataPoint = []
-              let lt = parseFloat(response.result[item].c[0])
-              dataPoint.push(ut, lt)
-              //console.log(item + ':', dataPoint)
-
-              //Send the datapoint to the database
-              common.f(
-                'POST',
-                '/api/data/' + item + '/' + dataPoint,
-                response => {
-                  //console.log(response)
-                }
-              )
-            })
-          })
+          //console.log('Response from serverKraFetchSaveWS:', response)
         },
-        this.setState({ warning: '' }) //Occasionally clear warning area
-      )
+        this.setState({ warning: '' })
+      ) //Occasionally clear warning area
     }
   }
-  addTicker(pair) {
-    socketFuncs.addTickerWS(pair)
 
-    common.f('POST', '/api/ar/' + pair, response => {
+  addTicker(pair) {
+    clientFuncsWS.addTickerWS(pair, response => {
       console.log(response)
       this.getTickers()
     })
   }
   deleteTicker(xpair) {
-    socketFuncs.removeTickerWS(xpair)
-
-    common.f('DELETE', '/api/ar/' + xpair, response => {
-      //console.log(response)
+    clientFuncsWS.removeTickerWS(xpair, response => {
+      console.log(response)
       this.getTickers()
     })
   }
@@ -163,23 +120,26 @@ export default class App extends Component {
   componentWillMount() {
     //this.deleteTicker('ffff') //debug
     this.getTickers()
-    setInterval(this.getTickers, 60000)
+    clearInterval(timer)
+    const timer = setInterval(this.getTickers, 60000)
   }
   render() {
     return (
       <div>
         <h1>Charmed Cash</h1>
-        <h6>
-          a realtime* digital currency ticker tracker | data from Kraken.com
-          <br />
-          <small>
-            *i realized most of the way through that the Kraken API doesn't
-            provide straightforward access to historical data, so you'll have to
-            wait to accumulate some. this project was really just an chance to
-            practice using web sockets anyway... in this case, that means that
-            others' browsers will show your ticker toggles without a refresh
-          </small>
-        </h6>
+        <h3>
+          a realtime* digital currency ticker tracker | data from{' '}
+          <a href="https://kraken.com/" target="_blank">
+            Kraken.com
+          </a>
+        </h3>
+        <p>
+          *i realized most of the way through that the Kraken API doesn't
+          provide straightforward access to historical data, so you'll have to
+          wait to accumulate some. this project was really just an chance to
+          practice using web sockets anyway... in this case, that means that
+          others' browsers will show your ticker toggles without a refresh
+        </p>
         <HighchartsJS data={this.state.chartData} />
         <div>
           <label htmlFor="pairEntry">
