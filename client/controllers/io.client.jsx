@@ -24,6 +24,11 @@ const removeTickerWS = (xpair, cb) => {
   socket.emit('clientRemoveTickerWS', xpair)
 }
 
+const getNamesWS = cb => {
+  socket.on('serverGetNamesWS', response => cb(null, response))
+  socket.emit('clientGetNamesWS', 1000)
+}
+
 //Get all current trading pairs
 const getTickersWS = cb => {
   //console.log('io.client: getTickersWS')
@@ -43,6 +48,7 @@ const clientFuncsWS = {
   kraCheckerWS: kraCheckerWS,
   addTickerWS: addTickerWS,
   removeTickerWS: removeTickerWS,
+  getNamesWS: getNamesWS,
   getTickersWS: getTickersWS,
   kraFetchSaveWS: kraFetchSaveWS
 }

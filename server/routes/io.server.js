@@ -55,6 +55,22 @@ const ioFuncs = io => {
       )
     })
 
+    //Client polls server once per interval for tickers; server pushes updates
+    client.on('clientGetNamesWS', interval => {
+      console.log('Client getting names with interval', interval)
+      setInterval(() => {
+        Pair.find((err, result) => {
+          if (err) {
+            console.error(err)
+          }
+          const pairNames = result.map(item => {
+            return item.name
+          })
+          client.emit('serverGetNamesWS', pairNames.join())
+        })
+      }, interval)
+    })
+
     //Displays all current pairs in the browser console
     client.on('clientGetTickersWS', () => {
       //console.log('server.io: clientGetTickersWS')

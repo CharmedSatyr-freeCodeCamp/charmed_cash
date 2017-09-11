@@ -22,12 +22,62 @@ export default class App extends Component {
       toggleArr: [],
       warning: ''
     }
-    this.handleSubmit = this.handleSubmit.bind(this)
-    this.getTickers = this.getTickers.bind(this)
+    //this.getTickers = this.getTickers.bind(this)
+    //this.handleSubmit = this.handleSubmit.bind(this)
     this.addTicker = this.addTicker.bind(this)
     this.deleteTicker = this.deleteTicker.bind(this)
     this.makeToggles = this.makeToggles.bind(this)
   }
+  setNames(names) {
+    this.setState({ tickers: names })
+    this.makeToggles()
+  }
+  getNames() {
+    clientFuncsWS.getNamesWS((err, result) => {
+      this.state.tickers === result ? console.log() : this.setNames(result)
+    })
+  }
+  makeToggles() {
+    //Create the toggles
+    //Baked in pairs
+    const bakedIn = 'XXBTZUSD,XETHZUSD,XZECZUSD'
+    //Dynamic pairs
+    const dynamic = this.state.tickers
+    //Both
+    let complete
+    dynamic.length > 0
+      ? (complete = bakedIn + ',' + dynamic)
+      : (complete = bakedIn)
+    let c = complete.split(',')
+    //Deduplicate
+    c = common.uniq(c)
+    //Make the toggleArr
+    const toggleArr = c.map((item, index) => {
+      return (
+        <Toggle
+          pair={item}
+          on={this.state.tickers.indexOf(item) > -1}
+          add={this.addTicker}
+          del={this.deleteTicker}
+          key={index}
+        />
+      )
+    })
+    //set State
+    this.setState({ toggleArr: toggleArr })
+  }
+  addTicker(pair) {
+    clientFuncsWS.addTickerWS(pair, response => {
+      console.log(response)
+    })
+  }
+  deleteTicker(xpair) {
+    clientFuncsWS.removeTickerWS(xpair, response => {
+      console.log(response)
+    })
+  }
+
+  /*
   handleSubmit() {
     //Submit and start following a new trading pair
     const pair = common.prettyTickers(
@@ -76,52 +126,16 @@ export default class App extends Component {
     }
   }
 
-  addTicker(pair) {
-    clientFuncsWS.addTickerWS(pair, response => {
-      console.log(response)
-      this.getTickers()
-    })
-  }
-  deleteTicker(xpair) {
-    clientFuncsWS.removeTickerWS(xpair, response => {
-      console.log(response)
-      this.getTickers()
-    })
-  }
-  makeToggles() {
-    //Create the toggles
-    //Baked in pairs
-    const bakedIn = 'XXBTZUSD,XETHZUSD,XZECZUSD'
-    //Dynamic pairs
-    const dynamic = this.state.tickers
-    //Both
-    let complete
-    dynamic.length > 0
-      ? (complete = bakedIn + ',' + dynamic)
-      : (complete = bakedIn)
-    let c = complete.split(',')
-    //Deduplicate
-    c = common.uniq(c)
-    //Make the toggleArr
-    const toggleArr = c.map((item, index) => {
-      return (
-        <Toggle
-          pair={item}
-          on={this.state.tickers.indexOf(item) > -1}
-          add={this.addTicker}
-          del={this.deleteTicker}
-          key={index}
-        />
-      )
-    })
-    //set State
-    this.setState({ toggleArr: toggleArr })
-  }
   componentWillMount() {
     //this.deleteTicker('ffff') //debug
     this.getTickers()
     clearInterval(timer)
     const timer = setInterval(this.getTickers, 60000)
+    //clearInterval(pairNames)
+    //const pairNames = setInterval(this.getNames, 5000)
+  }*/
+  componentWillMount() {
+    this.getNames()
   }
   render() {
     return (
@@ -140,6 +154,9 @@ export default class App extends Component {
           practice using web sockets anyway... in this case, that means that
           others' browsers will show your ticker toggles without a refresh
         </p>
+        <h3>
+          Currently following: {this.state.tickers}
+        </h3>
         <HighchartsJS data={this.state.chartData} />
         <div>
           <label htmlFor="pairEntry">
