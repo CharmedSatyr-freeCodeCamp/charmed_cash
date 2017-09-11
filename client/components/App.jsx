@@ -23,7 +23,7 @@ export default class App extends Component {
       warning: ''
     }
     //this.getTickers = this.getTickers.bind(this)
-    //this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
     this.addTicker = this.addTicker.bind(this)
     this.deleteTicker = this.deleteTicker.bind(this)
     this.makeToggles = this.makeToggles.bind(this)
@@ -77,7 +77,6 @@ export default class App extends Component {
     })
   }
 
-  /*
   handleSubmit() {
     //Submit and start following a new trading pair
     const pair = common.prettyTickers(
@@ -88,12 +87,19 @@ export default class App extends Component {
       if (response.result) {
         this.addTicker(pair)
         this.setState({ warning: ' ' + pair + ' added.' })
+        setTimeout(() => {
+          this.setState({ warning: '' })
+        }, 10000)
       } else {
-        this.setState({ warning: ' Please check your input...' })
-        console.log('Something is wrong with the entry. No pairs added.')
+        this.setState({
+          warning: ' Something is wrong with this entry. No pairs added.'
+        })
+        setTimeout(() => {
+          this.setState({ warning: '' })
+        }, 10000)
       }
     })
-  }
+  } /*
   getTickers() {
     //Get all tickers saved in the database
     clientFuncsWS.getTickersWS(async allTickers => {

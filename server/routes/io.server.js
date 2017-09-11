@@ -71,6 +71,13 @@ const ioFuncs = io => {
       }, interval)
     })
 
+    //Check if pair is a valid Kraken pair
+    client.on('clientKraCheckerWS', async pair => {
+      //console.log('io.server: serverKraCheckerWS')
+      const results = await kraFunc.kraFetch(pair)
+      client.emit('serverKraCheckerWS', results)
+    })
+
     //Displays all current pairs in the browser console
     client.on('clientGetTickersWS', () => {
       //console.log('server.io: clientGetTickersWS')
@@ -80,12 +87,6 @@ const ioFuncs = io => {
         }
         client.emit('serverGetTickersWS', result)
       })
-    })
-
-    client.on('clientKraCheckerWS', async pair => {
-      //console.log('io.server: serverKraCheckerWS')
-      const results = await kraFunc.kraFetch(pair)
-      client.emit('serverKraCheckerWS', results)
     })
 
     client.on('clientKraFetchSaveWS', async pairStr => {
