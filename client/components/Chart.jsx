@@ -2,6 +2,7 @@
 
 /*** PACKAGES ***/
 import React, { Component } from 'react'
+import Highcharts from 'highcharts'
 import ReactHighcharts from 'react-highcharts'
 import ReactHighstock from 'react-highcharts/ReactHighstock.src'
 
@@ -9,8 +10,11 @@ import ReactHighstock from 'react-highcharts/ReactHighstock.src'
 import common from '../controllers/common.jsx'
 
 /*** MAIN ***/
+//Turn this into a real component and give it a shouldComponentUpdate(nextProps, nextState),
+// and then turn back on Animation
+//https://facebook.github.io/react/docs/react-component.html#shouldcomponentupdate
 const HighchartsJS = ({ data }) => {
-  //Map data into Highcharts eries format
+  //Map data into Highcharts series format
   const seriesArr = data.map(item => {
     return {
       name: common.prettyTickers(item[0]),
@@ -24,7 +28,6 @@ const HighchartsJS = ({ data }) => {
   //Highcharts config
   const config = {
     chart: {
-      //      animation: false, //Doesn't seem to turn off the animations!
       backgroundColor: '#ffffff'
     },
     xAxis: {
@@ -36,12 +39,14 @@ const HighchartsJS = ({ data }) => {
     title: {
       text: 'Digital Currency Prices'
     },
-    series: seriesArr
+    series: seriesArr,
+    plotOptions: { line: { animation: false } }
   }
-
+  //neverReflow property for ReactHighcharts makes it not render...
+  //isPureConfig
   return (
     <div>
-      <ReactHighcharts config={config} />
+      <ReactHighcharts isPureConfig config={config} />
     </div>
   )
 }
