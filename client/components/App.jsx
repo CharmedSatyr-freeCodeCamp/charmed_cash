@@ -69,9 +69,10 @@ export default class App extends Component {
       }
     })
   }
+
   /*
    * Generate on/off buttons based on valid tickers.               *
-   * Several popular Kraken will always be visible.                *
+   * Several popular Kraken pairs will always be visible.          *
    * For other Kraken pairs, turning button off = unfollowing pair *
    *                                                               */
   makeToggles() {
@@ -140,7 +141,7 @@ export default class App extends Component {
       }
     })
   }
-  /* Chart the data saved by on the server */
+  /* Chart the data saved on the server */
   chartData() {
     this.setState({ loading: 'Drawing chart...' })
     //Get data points for chart
@@ -154,8 +155,8 @@ export default class App extends Component {
   }
   componentWillMount() {
     //this.deleteTicker('ffff') //debug
-    this.makeToggles() //Run once so defaults appear
     this.getTickers() //Boot up
+    this.makeToggles() //Run once so defaults appear
   }
   componentDidMount() {
     this.setState({ loading: 'Component mounted, awaiting tickers...' })

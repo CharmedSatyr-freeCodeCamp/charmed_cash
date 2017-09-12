@@ -144,7 +144,7 @@ const ioFuncs = io => {
       client.emit('serverKraCheckerWS', results)
     })
 
-    //Displays all current pairs in the browser console
+    /* Displays all current pairs in the browser console */
     client.on('clientChartDataWS', () => {
       //console.log('server.io: clientChartDataWS')
       Pair.find((err, result) => {
