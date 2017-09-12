@@ -24,22 +24,22 @@ const removeTickerWS = (xpair, cb) => {
   socket.emit('clientRemoveTickerWS', xpair)
 }
 
-const getNamesWS = cb => {
-  socket.on('serverGetNamesWS', response => cb(null, response))
-  socket.emit('clientGetNamesWS', 1000)
+const getTickersWS = (interval, cb) => {
+  socket.on('serverGetTickersWS', response => cb(null, response))
+  socket.emit('clientGetTickersWS', interval)
 }
 
 //Get all current trading pairs
-const getTickersWS = cb => {
-  //console.log('io.client: getTickersWS')
-  socket.on('serverGetTickersWS', cb)
-  socket.emit('clientGetTickersWS')
+const chartDataWS = cb => {
+  //console.log('io.client: chartDataWS')
+  socket.on('serverChartDataWS', cb)
+  socket.emit('clientChartDataWS')
 }
 
 //Fetch data for a pair and save the data
-const kraFetchSaveWS = (tickers, cb1, cb2) => {
+const kraFetchSaveWS = (tickers, cb) => {
   //console.log('io.client: kraFetchSaveWS')
-  socket.on('serverKraFetchSaveWS', cb1, cb2)
+  socket.on('serverKraFetchSaveWS', cb)
   socket.emit('clientKraFetchSaveWS', tickers)
 }
 
@@ -48,8 +48,8 @@ const clientFuncsWS = {
   kraCheckerWS: kraCheckerWS,
   addTickerWS: addTickerWS,
   removeTickerWS: removeTickerWS,
-  getNamesWS: getNamesWS,
   getTickersWS: getTickersWS,
+  chartDataWS: chartDataWS,
   kraFetchSaveWS: kraFetchSaveWS
 }
 

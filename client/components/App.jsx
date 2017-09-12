@@ -20,23 +20,60 @@ export default class App extends Component {
       tickers: '',
       chartData: [],
       toggleArr: [],
-      warning: ''
+      warning: '',
+      loading: '',
+      counter: 60
     }
-    //this.getTickers = this.getTickers.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.addTicker = this.addTicker.bind(this)
     this.deleteTicker = this.deleteTicker.bind(this)
     this.makeToggles = this.makeToggles.bind(this)
   }
-  setNames(names) {
-    this.setState({ tickers: names })
-    this.makeToggles()
+
+  /* Task runner updates tickers, toggles, and displays from getTickers info */
+  setTickers(tickers) {
+    let set = new Promise((resolve, reject) => {
+      this.setState({
+        tickers: tickers
+      })
+      resolve(tickers)
+    })
+    set
+      .then(result => {
+        this.makeToggles()
+        this.chartData()
+      })
+      .then(result => {
+        let s
+        this.state.tickers
+          ? (s = 'Ready')
+          : (s = 'Not following any tickers...')
+
+        this.setState({
+          loading: s
+        })
+      })
   }
-  getNames() {
-    clientFuncsWS.getNamesWS((err, result) => {
-      this.state.tickers === result ? console.log() : this.setNames(result)
+
+  /* Keeps tickers in sync between client and server (allowing near real time *
+   * ticker sync among users on different devices.                            */
+  getTickers() {
+    this.setState({ loading: 'Getting tickers...' })
+
+    clientFuncsWS.getTickersWS(1000, (err, result) => {
+      this.setState({ counter: this.state.counter - 1 })
+      this.state.tickers === result ? console.log() : this.setTickers(result)
+      if (this.state.counter === 0) {
+        this.setState({ counter: 60 })
+        this.chartData()
+      }
     })
   }
+  /*
+   * Generate on/off buttons based on valid tickers.               *
+   * Several popular Kraken will always be visible.                *
+   * For other Kraken pairs, turning button off = unfollowing pair *
+   *                                                               */
   makeToggles() {
     //Create the toggles
     //Baked in pairs
@@ -67,26 +104,29 @@ export default class App extends Component {
     this.setState({ toggleArr: toggleArr })
   }
   addTicker(pair) {
-    clientFuncsWS.addTickerWS(pair, response => {
-      console.log(response)
+    clientFuncsWS.addTickerWS(pair, async response => {
+      this.setState({ loading: await response })
     })
   }
   deleteTicker(xpair) {
-    clientFuncsWS.removeTickerWS(xpair, response => {
-      console.log(response)
+    clientFuncsWS.removeTickerWS(xpair, async response => {
+      this.setState({ loading: await response })
     })
   }
-
+  /* Validate and save currency pair input, else warn if invalid */
   handleSubmit() {
     //Submit and start following a new trading pair
     const pair = common.prettyTickers(
       document.getElementById('pairEntry').value
     )
+    this.setState({ loading: 'Validating ' + pair + '...' })
     //Check Kraken to see if it's a valid pair before adding to DB
     clientFuncsWS.kraCheckerWS(pair, response => {
       if (response.result) {
         this.addTicker(pair)
-        this.setState({ warning: ' ' + pair + ' added.' })
+        this.setState({
+          warning: ' ' + pair + ' added.'
+        })
         setTimeout(() => {
           this.setState({ warning: '' })
         }, 10000)
@@ -99,49 +139,26 @@ export default class App extends Component {
         }, 10000)
       }
     })
-  } /*
-  getTickers() {
-    //Get all tickers saved in the database
-    clientFuncsWS.getTickersWS(async allTickers => {
-      //console.log('allTickers:', await allTickers) //Logs everything for debug
-      const pairNames = await allTickers.map(item => {
-        return common.prettyTickers(item.name)
-      })
-      this.setState({ tickers: pairNames.join(',') })
-      this.makeToggles() // Make the toggles after setting tickers
-
-      //Get data points for chart
-      const chartArr = await allTickers.map(item => {
+  }
+  /* Chart the data saved by on the server */
+  chartData() {
+    this.setState({ loading: 'Drawing chart...' })
+    //Get data points for chart
+    clientFuncsWS.chartDataWS(async result => {
+      const chartArr = await result.map(item => {
         return [common.prettyTickers(item.name), item.data]
       })
-      this.setState({ chartData: chartArr })
+      //Chart the data
+      this.setState({ chartData: chartArr, loading: 'Ready' })
     })
-    this.fetchKraData()
   }
-  fetchKraData() {
-    //Tickers from state
-    if (this.state.tickers.length) {
-      //Query Kraken for current data about the tickers
-      clientFuncsWS.kraFetchSaveWS(
-        this.state.tickers,
-        response => {
-          //console.log('Response from serverKraFetchSaveWS:', response)
-        },
-        this.setState({ warning: '' })
-      ) //Occasionally clear warning area
-    }
-  }
-
   componentWillMount() {
     //this.deleteTicker('ffff') //debug
-    this.getTickers()
-    clearInterval(timer)
-    const timer = setInterval(this.getTickers, 60000)
-    //clearInterval(pairNames)
-    //const pairNames = setInterval(this.getNames, 5000)
-  }*/
-  componentWillMount() {
-    this.getNames()
+    this.makeToggles() //Run once so defaults appear
+    this.getTickers() //Boot up
+  }
+  componentDidMount() {
+    this.setState({ loading: 'Component mounted, awaiting tickers...' })
   }
   render() {
     return (
@@ -161,7 +178,11 @@ export default class App extends Component {
           others' browsers will show your ticker toggles without a refresh
         </p>
         <h3>
-          Currently following: {this.state.tickers}
+          Currently following: {this.state.tickers.split(',').join(', ')}
+          <br />
+          Status: {this.state.loading}
+          <br />
+          Next update: {this.state.counter}
         </h3>
         <HighchartsJS data={this.state.chartData} />
         <div>
