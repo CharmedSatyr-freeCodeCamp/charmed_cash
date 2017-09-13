@@ -18,7 +18,7 @@ const HighchartsJS = ({ data }) => {
   const seriesArr = data.map(item => {
     return {
       name: common.prettyTickers(item[0]),
-      data: common.uniq(item[1]),
+      data: common.uniq(item[1].sort()), //Sort by data and deduplicate
       tooltip: {
         valueDecimals: 2
       }
@@ -42,8 +42,8 @@ const HighchartsJS = ({ data }) => {
     series: seriesArr,
     plotOptions: { line: { animation: false } }
   }
-  //neverReflow property for ReactHighcharts makes it not render...
-  //isPureConfig
+
+  // isPureConfig should keep the chart from updating unless it has new data
   return (
     <div>
       <ReactHighcharts isPureConfig config={config} />
