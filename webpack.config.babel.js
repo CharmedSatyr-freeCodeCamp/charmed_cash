@@ -13,7 +13,11 @@ const PROD = process.env.NODE_ENV === 'production'
 /*** COMMON PLUGINS ***/
 const defineConfig = new webpack.DefinePlugin({
   'process.env': {
-    NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+    NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+    PORT: JSON.stringify(process.env.PORT),
+    API_KEY: JSON.stringify(process.env.API_KEY),
+    PRIVATE_KEY: JSON.stringify(process.env.PRIVATE_KEY),
+    MONGO_URI: JSON.stringify(process.env.MONGO_URI)
   }
 })
 
@@ -120,14 +124,6 @@ const server = {
     ]
   },
   target: 'node',
-  /*  node: {
-    console: false,
-    global: false,
-    process: false,
-    Buffer: false,
-    __filename: false,
-    __dirname: false
-  },*/
   externals: [nodeExternals()],
   plugins: PROD ? [defineConfig, compConfig, uglyConfig] : [defineConfig]
 }
