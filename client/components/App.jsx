@@ -6,6 +6,7 @@ import React, { Component } from 'react'
 /*** COMPONENTS ***/
 import HighchartsJS from './Chart.jsx'
 import Toggle from './Toggle.jsx'
+import Next from './Next.jsx'
 
 /*** CONTROLLERS ***/
 import common from '../controllers/common.jsx'
@@ -18,16 +19,17 @@ export default class App extends Component {
 
     this.state = {
       tickers: '',
-      chartData: [],
+      chartArr: [],
       toggleArr: [],
       warning: '',
-      loading: '',
-      counter: 60
+      loading: ''
     }
+
     this.handleSubmit = this.handleSubmit.bind(this)
     this.addTicker = this.addTicker.bind(this)
     this.deleteTicker = this.deleteTicker.bind(this)
     this.makeToggles = this.makeToggles.bind(this)
+    this.chartData = this.chartData.bind(this)
   }
 
   /* Task runner updates tickers, toggles, and displays from getTickers info */
@@ -59,22 +61,21 @@ export default class App extends Component {
    * ticker sync among users on different devices.                            */
   getTickers() {
     this.setState({ loading: 'Getting tickers...' })
-
     clientFuncsWS.getTickersWS(1000, (err, result) => {
-      this.setState({ counter: this.state.counter - 1 })
       this.state.tickers === result ? console.log() : this.setTickers(result)
-      if (this.state.counter === 0) {
-        this.setState({ counter: 60 })
-        this.chartData()
-      }
     })
+
+    //If after 1500 ms there are no tickers, default makeToggles
+    setTimeout(() => {
+      if (!this.state.tickers) {
+        this.makeToggles()
+      }
+    }, 1500)
   }
 
-  /*
-   * Generate on/off buttons based on valid tickers.               *
+  /* Generate on/off buttons based on valid tickers.               *
    * Several popular Kraken pairs will always be visible.          *
-   * For other Kraken pairs, turning button off = unfollowing pair *
-   *                                                               */
+   * For other Kraken pairs, turning button off = unfollowing pair */
   makeToggles() {
     //Create the toggles
     //Baked in pairs
@@ -150,13 +151,12 @@ export default class App extends Component {
         return [common.prettyTickers(item.name), item.data]
       })
       //Chart the data
-      this.setState({ chartData: chartArr, loading: 'Ready' })
+      this.setState({ chartArr: chartArr, loading: 'Ready' })
     })
   }
   componentWillMount() {
     //this.deleteTicker('ffff') //debug
     this.getTickers() //Boot up
-    this.makeToggles() //Run once so defaults appear
   }
   componentDidMount() {
     this.setState({ loading: 'Component mounted, awaiting tickers...' })
@@ -183,9 +183,9 @@ export default class App extends Component {
           <br />
           Status: {this.state.loading}
           <br />
-          Next update: {this.state.counter}
+          <Next fn={this.chartData} />
         </h3>
-        <HighchartsJS data={this.state.chartData} />
+        <HighchartsJS data={this.state.chartArr} />
         <div>
           <label htmlFor="pairEntry">
             <h3>

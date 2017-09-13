@@ -24,9 +24,16 @@ const removeTickerWS = (xpair, cb) => {
   socket.emit('clientRemoveTickerWS', xpair)
 }
 
+//Get tickers once per second
 const getTickersWS = (interval, cb) => {
   socket.on('serverGetTickersWS', response => cb(null, response))
   socket.emit('clientGetTickersWS', interval)
+}
+
+//Set the Next update timer based on getTickersWS (see Next component, io.server)
+const nextUpdateWS = cb => {
+  //console.log('io.client: nextUpdateWS')
+  socket.on('serverNextUpdateWS', cb)
 }
 
 //Get all current trading pairs
@@ -45,6 +52,7 @@ const kraFetchSaveWS = (tickers, cb) => {
 
 //Export object
 const clientFuncsWS = {
+  nextUpdateWS: nextUpdateWS,
   kraCheckerWS: kraCheckerWS,
   addTickerWS: addTickerWS,
   removeTickerWS: removeTickerWS,

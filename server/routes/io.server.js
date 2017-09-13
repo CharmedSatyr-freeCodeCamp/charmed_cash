@@ -133,6 +133,7 @@ const ioFuncs = io => {
             return item.name
           })
           client.emit('serverGetTickersWS', pairNames.join())
+          client.emit('serverNextUpdateWS')
         })
       }, interval)
     })
