@@ -2,7 +2,6 @@
 
 /*** PACKAGES ***/
 import React, { Component } from 'react'
-import Highcharts from 'highcharts'
 import ReactHighcharts from 'react-highcharts'
 import ReactHighstock from 'react-highcharts/ReactHighstock.src'
 
