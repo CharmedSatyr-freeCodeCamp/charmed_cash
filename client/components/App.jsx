@@ -163,6 +163,9 @@ export default class App extends Component {
   componentDidMount() {
     this.setState({ loading: 'Component mounted, awaiting tickers...' })
   }
+  shouldComponentUpdate(nextProps, nextState) {
+    return true
+  }
   render() {
     return (
       <div>
