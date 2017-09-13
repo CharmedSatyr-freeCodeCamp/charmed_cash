@@ -41,11 +41,10 @@ export default class App extends Component {
       resolve(tickers)
     })
     set
-      .then(result => {
+      .then(() => {
         this.makeToggles()
-        this.chartData()
       })
-      .then(result => {
+      .then(() => {
         let s
         this.state.tickers
           ? (s = 'Ready')
@@ -54,6 +53,9 @@ export default class App extends Component {
         this.setState({
           loading: s
         })
+      })
+      .then(() => {
+        this.chartData()
       })
   }
 
