@@ -11,8 +11,6 @@ dotenv.load()
 const PROD = process.env.NODE_ENV === 'production'
 
 /*** COMMON CONFIGURATIONS ***/
-//I don't know what this is, but it prevents some errors,
-//e.g. "Cannot resolve module 'fs'..."
 const nodeConfig = {
   //console: false,
   //global: false,
@@ -20,6 +18,8 @@ const nodeConfig = {
   //Buffer: false,
   //  __filename: false,
   //__dirname: false,
+  /* I don't know what this is, but it prevents some errors, *
+   * e.g. "Cannot resolve module 'fs'..."                    */
   fs: 'empty'
 }
 

@@ -8,12 +8,12 @@ import express from 'express'
 const app = express()
 
 /*** ENVIRONMENT ***/
+const path = process.cwd()
 import dotenv from 'dotenv'
 dotenv.load()
 
 /*** DEV TOOLS ***/
 import morgan from 'morgan'
-const path = process.cwd()
 const DEV = process.env.NODE_ENV === 'development'
 if (DEV) {
   app.use(morgan('dev'))
@@ -24,8 +24,11 @@ app.set('view engine', 'html')
 app.engine('html', (path, option, cb) => {})
 
 /*** ENABLE COMPRESSION ***/
-import compression from 'compression'
-app.use(compression())
+const PROD = process.env.NODE_ENV === 'production'
+const compression = require('compression')
+if (PROD) {
+  app.use(compression())
+}
 
 /*** MIDDLEWARE ***/
 app.use('/js', express.static(path + '/dist/js')) //The first argument creates the virtual directory used in index.html
