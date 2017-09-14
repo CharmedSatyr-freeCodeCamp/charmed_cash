@@ -37,13 +37,27 @@ export default class HighchartsJS extends Component {
       chart: {
         backgroundColor: '#ffffff'
       },
+      legend: {
+        layout: 'horizontal',
+        shadow: 'true',
+        backgroundColor: '#ffffff',
+        itemStyle: {
+          color: '#000000',
+          'font-weight': 'lighter'
+        }
+      },
       xAxis: {
-        type: 'datetime'
+        type: 'datetime',
+        labels: { style: { color: '#000000', 'font-family': 'sans' } }
+      },
+      yAxis: {
+        title: { style: { color: '#000000', 'font-family': 'sans' } }
       },
       rangeSelector: {
         selected: 1
       },
       title: {
+        style: { color: '#000000', 'font-family': 'sans' },
         text: 'Digital Currency Prices'
       },
       series: seriesArr,

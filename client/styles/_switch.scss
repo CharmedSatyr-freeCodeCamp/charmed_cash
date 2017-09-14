@@ -1,3 +1,5 @@
+@import '_variables.scss';
+
 .switch {
   border: 1px solid #ccc;
   width: 50px;
@@ -20,7 +22,7 @@
   transition: left .2s ease-in-out;
 }
 .switch.on {
-  background: green;
+  background: $blue;
 }
 .switch.on .switch-toggle {
   left: 23px;
