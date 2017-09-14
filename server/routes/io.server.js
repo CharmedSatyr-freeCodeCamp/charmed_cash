@@ -29,6 +29,8 @@ const ioEvents = io => {
 
     /* Returns all current tickers with their data */
     pairController.chartDataWS('chartDataWS', serverSocket) //How is this worth it?
+
+    io.on('disconnect', () => console.log('Socket.io Client disconnected.'))
   })
 }
 
