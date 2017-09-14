@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "\"Chart the Stock Market\" is a project required for freeCodeCamp's Back End Development Certificate.",
   "main": "server.js",
-  "engines": {
-    "node": "7.10.1"
-  },
   "scripts": {
     "start": "npm-run-all --parallel watch:client watch:server",
     "build": "webpack --config webpack.config.babel.js",

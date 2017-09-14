@@ -6,9 +6,7 @@ dotenv.load()
 
 /*** CREATE CLIENT SOCKETS ***/
 import openSocket from 'socket.io-client'
-const socketURL = process.env.APP_URL + ':' + process.env.PORT
-const clientSocket = openSocket()
-console.log('Client socket opened at', socketURL)
+const clientSocket = openSocket() //openSocket takes a URL as a parameter but defaults to window.location
 
 /*** CLIENT-SIDE WEBSOCKET EVENT FUNCTIONS ***/
 //Receives notifications from server on fetching and saving new Kraken data
