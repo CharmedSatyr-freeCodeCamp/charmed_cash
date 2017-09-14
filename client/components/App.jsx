@@ -67,6 +67,11 @@ export default class App extends Component {
       this.state.tickers === result ? console.log() : this.setTickers(result)
     })
 
+    //Get updates from the server when new Kraken data is fetched and saved
+    clientFuncsWS.kraFetchSaveWS(message => {
+      //console.log(message)
+    })
+
     //If after 1500 ms there are no tickers, default makeToggles
     setTimeout(() => {
       if (!this.state.tickers) {
@@ -177,11 +182,11 @@ export default class App extends Component {
           </a>
         </h3>
         <p>
-          *i realized most of the way through that the Kraken API doesn't
-          provide straightforward access to historical data, so you'll have to
-          wait to accumulate some. this project was really just an chance to
-          practice using web sockets anyway... in this case, that means that
-          others' browsers will show your ticker toggles without a refresh
+          *The Kraken API doesn't provide straightforward access to historical
+          data, so the graphs here are of data accumulated in the database and
+          may not be accurate. Note, however, that because the client and server
+          communicate almost entirely via websockets, any tickers you add to the
+          display will immediately appear on other devices.
         </p>
         <h3>
           Currently following: {this.state.tickers.split(',').join(', ')}

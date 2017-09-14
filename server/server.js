@@ -7,7 +7,7 @@ import 'babel-polyfill'
 import express from 'express'
 const app = express()
 
-/*** TOOLS ***/
+/*** ENVIRONMENT ***/
 import dotenv from 'dotenv'
 dotenv.load()
 
@@ -23,10 +23,14 @@ if (DEV) {
 app.set('view engine', 'html')
 app.engine('html', (path, option, cb) => {})
 
+/*** ENABLE COMPRESSION ***/
+import compression from 'compression'
+app.use(compression())
+
 /*** MIDDLEWARE ***/
 app.use('/js', express.static(path + '/dist/js')) //The first argument creates the virtual directory used in index.html
 app.use('/styles', express.static(path + '/dist/styles'))
-app.use('/favicon', express.static(path + '/dist/favicon.ico')) //The first argument creates the virtual directory used in index.html
+app.use('/img', express.static(path + '/dist/img'))
 
 /*** MONGOOSE ***/
 import mongoose from 'mongoose'
@@ -41,7 +45,7 @@ mongoose.connect(process.env.MONGO_URI, { useMongoClient: true }, (err, db) => {
 })
 
 /*** ROUTES ***/
-import routes from './routes/index.js'
+import routes from './routes/index.server.js'
 routes(app)
 
 /*** WEB SOCKETS ***/
@@ -49,11 +53,11 @@ import http from 'http'
 const server = http.createServer(app)
 import socket from 'socket.io'
 const io = socket(server)
-import ioFuncs from './routes/io.server.js'
-ioFuncs(io)
+import ioEvents from './routes/io.server.js'
+ioEvents(io)
 
 /*** SERVE ***/
 const port = process.env.PORT || 8080
 server.listen(port, () => {
-  console.log('Socket.io listening on port', port + '.')
+  console.log('Server listening on port', port + '.')
 })

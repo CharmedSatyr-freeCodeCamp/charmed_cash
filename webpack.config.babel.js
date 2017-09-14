@@ -10,11 +10,24 @@ import nodeExternals from 'webpack-node-externals'
 dotenv.load()
 const PROD = process.env.NODE_ENV === 'production'
 
-/*** COMMON PLUGINS ***/
+/*** COMMON CONFIGURATIONS ***/
+//I don't know what this is, but it prevents some errors,
+//e.g. "Cannot resolve module 'fs'..."
+const nodeConfig = {
+  //console: false,
+  //global: false,
+  //process: false,
+  //Buffer: false,
+  //  __filename: false,
+  //__dirname: false,
+  fs: 'empty'
+}
+
 const defineConfig = new webpack.DefinePlugin({
   'process.env': {
     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
     PORT: JSON.stringify(process.env.PORT),
+    APP_URL: JSON.stringify(process.env.APP_URL),
     API_KEY: JSON.stringify(process.env.API_KEY),
     PRIVATE_KEY: JSON.stringify(process.env.PRIVATE_KEY),
     MONGO_URI: JSON.stringify(process.env.MONGO_URI)
@@ -39,7 +52,7 @@ const client = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/i,
+        test: /\.e?jsx?$/i,
         include: __dirname + '/client',
         exclude: [/node_modules/, /server/],
         loader: 'babel-loader',
@@ -67,6 +80,30 @@ const client = {
             }
           ]
         })
+      },
+      {
+        test: /\.(jpe?g|png|gif)$/i,
+        loader: 'url-loader',
+        options: {
+          limit: 10000, //limit =< 10000 ? Data URL : fallback to file-loader
+          name: 'img/[sha256:hash:5].[ext]' //If using file-loader, emit to img/ as a 10 digit sha256 has with the proper extension.
+        }
+      },
+      {
+        test: /\.ico$/i,
+        loader: 'file-loader',
+        options: {
+          name: 'img/[name].[ext]'
+        }
+      },
+      {
+        test: /\.(eot|ttf|svg|woff|woff2)$/i,
+        loader: 'url-loader',
+        options: {
+          limit: 10000,
+          mimetype: 'application/font-woff',
+          name: 'fonts/[sha256:hash:5].[ext]' //must use full output path
+        }
       }
     ]
   },
@@ -74,6 +111,8 @@ const client = {
     path: __dirname + '/dist',
     filename: PROD ? 'js/client.bundle.min.js' : 'js/client.bundle.js'
   },
+  target: 'web',
+  node: nodeConfig,
   plugins: PROD
     ? [
         new HTMLWebpackPlugin({
@@ -124,6 +163,7 @@ const server = {
     ]
   },
   target: 'node',
+  //  node: nodeConfig,
   externals: [nodeExternals()],
   plugins: PROD ? [defineConfig, compConfig, uglyConfig] : [defineConfig]
 }
