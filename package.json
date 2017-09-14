@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "\"Chart the Stock Market\" is a project required for freeCodeCamp's Back End Development Certificate.",
   "main": "server.js",
-  "engines": { "node": "7.10.1" },
+  "engines": {
+    "node": "7.10.1"
+  },
   "scripts": {
     "start": "npm-run-all --parallel watch:client watch:server",
     "build": "webpack --config webpack.config.babel.js",
@@ -32,6 +34,7 @@
   "homepage": "https://github.com/CharmedSatyr/chart_the_stock_market#readme",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
+    "compression": "^1.7.0",
     "dotenv": "^4.0.0",
     "express": "^4.15.4",
     "highcharts": "^5.0.14",
@@ -52,7 +55,6 @@
     "babel-preset-env": "^1.6.0",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
-    "compression": "^1.7.0",
     "compression-webpack-plugin": "^1.0.0",
     "css-loader": "^0.28.7",
     "extract-text-webpack-plugin": "^3.0.0",
