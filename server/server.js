@@ -12,11 +12,11 @@ import dotenv from 'dotenv'
 dotenv.load()
 
 /*** DEV TOOLS ***/
-//import morgan from 'morgan'
+import morgan from 'morgan'
 const path = process.cwd()
 const DEV = process.env.NODE_ENV === 'development'
 if (DEV) {
-  //  app.use(morgan('dev'))
+  app.use(morgan('dev'))
 }
 
 /*** VIEW ENGINE ***/
