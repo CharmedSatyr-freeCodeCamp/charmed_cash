@@ -48,8 +48,9 @@ mongoose.connect(process.env.MONGO_URI, { useMongoClient: true }, (err, db) => {
 })
 
 /*** ROUTES ***/
-import routes from './routes/index.server.js'
-routes(app)
+app.use('/', (req, res) => {
+  res.sendFile(path + '/dist/index.html')
+})
 
 /*** WEB SOCKETS ***/
 import http from 'http'
