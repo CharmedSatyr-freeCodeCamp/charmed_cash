@@ -25,9 +25,9 @@ app.engine('html', (path, option, cb) => {})
 
 /*** ENABLE COMPRESSION ***/
 const PROD = process.env.NODE_ENV === 'production'
-const compression = require('compression')
+//import compression from 'compression'
 if (PROD) {
-  app.use(compression())
+  //  app.use(compression())
 }
 
 /*** MIDDLEWARE ***/
