@@ -26,7 +26,7 @@ const nodeConfig = {
 const defineConfig = new webpack.DefinePlugin({
   'process.env': {
     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-    PORT: JSON.stringify(process.env.PORT),
+    //    PORT: JSON.stringify(process.env.PORT),
     APP_URL: JSON.stringify(process.env.APP_URL),
     API_KEY: JSON.stringify(process.env.API_KEY),
     PRIVATE_KEY: JSON.stringify(process.env.PRIVATE_KEY),
