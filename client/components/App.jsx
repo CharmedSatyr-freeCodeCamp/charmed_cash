@@ -64,7 +64,9 @@ export default class App extends Component {
   getTickers() {
     this.setState({ loading: 'Getting tickers...' })
     clientFuncsWS.getTickersWS(1000, (err, result) => {
-      this.state.tickers === result ? console.log() : this.setTickers(result)
+      if (this.state.tickers !== result) {
+        this.setTickers(result)
+      }
     })
 
     //Get updates from the server when new Kraken data is fetched and saved
@@ -77,7 +79,7 @@ export default class App extends Component {
       if (!this.state.tickers) {
         this.makeToggles()
       }
-    }, 1500)
+    }, 2000)
   }
 
   /* Generate on/off buttons based on valid tickers.               *
@@ -134,14 +136,16 @@ export default class App extends Component {
       if (response.result) {
         this.addTicker(pair)
         this.setState({
-          warning: ' ' + pair + ' added.'
+          warning: ' ' + pair + ' added.',
+          loading: 'Ready'
         })
         setTimeout(() => {
           this.setState({ warning: '' })
         }, 10000)
       } else {
         this.setState({
-          warning: ' Something is wrong with this entry. No pairs added.'
+          warning: ' Something is wrong with this entry. No pairs added.',
+          loading: 'Ready'
         })
         setTimeout(() => {
           this.setState({ warning: '' })
@@ -210,7 +214,7 @@ export default class App extends Component {
               placeholder=" Type a currency pair here..."
               type="text"
             />
-            <button onClick={this.handleSubmit}>POST</button>
+            <button onClick={this.handleSubmit}>Submit</button>
             {this.state.warning}
           </label>
           <br />
