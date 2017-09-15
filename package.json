@@ -5,7 +5,8 @@
   "main": "server.js",
   "engines": {
     "node": "8.4.0",
-    "npm": "5.4.1"
+    "npm": "5.4.1",
+    "yarn": "1.0.2"
   },
   "scripts": {
     "start": "npm-run-all --parallel watch:client watch:server",
