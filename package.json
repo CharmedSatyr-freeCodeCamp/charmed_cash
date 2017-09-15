@@ -37,7 +37,7 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "compression": "^1.7.0",
-    "dotenv-webpack": "^1.5.4",
+    "dotenv": "^4.0.0",
     "express": "^4.15.4",
     "highcharts": "^5.0.14",
     "kraken-api": "^1.0.0",

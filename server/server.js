@@ -61,7 +61,7 @@ import ioEvents from './routes/io.server.js'
 ioEvents(io)
 
 /*** SERVE ***/
-const port = process.env.PORT || 8080
-app.listen(port, () => {
+const port = process.env.PORT
+server.listen(port, () => {
   console.log('Server listening on port', port + '.')
 })

@@ -1,22 +1,24 @@
 /*** PACKAGES ***/
 import CompressionPlugin from 'compression-webpack-plugin'
-import Dotenv from 'dotenv-webpack'
+//import Dotenv from 'dotenv-webpack'
+import dotenv from 'dotenv'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import HTMLWebpackPlugin from 'html-webpack-plugin'
 import webpack from 'webpack'
 import nodeExternals from 'webpack-node-externals'
 
 /*** TOOLS ***/
+dotenv.load()
 const PROD = process.env.NODE_ENV === 'production'
 
 /*** COMMON CONFIGURATIONS ***/
-const dotEnvConfig = new Dotenv({
+/*const dotEnvConfig = new Dotenv({
   path: __dirname + '/.env',
   //  systemvars: true,
   silent: false
   //  safe: true,
 })
-
+*/
 const nodeConfig = {
   //console: false,
   //global: false,
@@ -33,7 +35,6 @@ const defineConfig = new webpack.DefinePlugin({
   'process.env': {
     NODE_ENV: JSON.stringify(process.env.NODE_ENV),
     PORT: JSON.stringify(process.env.PORT),
-    APP_URL: JSON.stringify(process.env.APP_URL),
     API_KEY: JSON.stringify(process.env.API_KEY),
     PRIVATE_KEY: JSON.stringify(process.env.PRIVATE_KEY),
     MONGO_URI: JSON.stringify(process.env.MONGO_URI)
@@ -172,8 +173,8 @@ const server = {
   //  node: nodeConfig,
   externals: [nodeExternals()],
   plugins: PROD
-    ? [dotEnvConfig, defineConfig, compConfig, uglyConfig]
-    : [dotEnvConfig, defineConfig]
+    ? [/*dotEnvConfig, */ defineConfig, compConfig, uglyConfig]
+    : [/*dotEnvConfig, */ defineConfig]
 }
 
 export default [client, server]
