@@ -207,7 +207,7 @@ export default class App extends Component {
               <a href="https://www.kraken.com/help/fees" target="_blank">
                 Kraken.com trading pair
               </a>{' '}
-              (e.g., DASHUSD)
+              (e.g., BCHUSD)
             </h3>
             <input
               id="pairEntry"
