@@ -1,12 +1,8 @@
 'use strict'
 
-/*** ENVIRONMENT ***/
-import dotenv from 'dotenv'
-dotenv.load()
-
 /*** CREATE CLIENT SOCKETS ***/
 import openSocket from 'socket.io-client'
-const clientSocket = openSocket() //openSocket takes a URL as a parameter but defaults to window.location
+const clientSocket = openSocket() //defaults to window.location but takes a URL
 
 /*** CLIENT-SIDE WEBSOCKET EVENT FUNCTIONS ***/
 //Receives notifications from server on fetching and saving new Kraken data

@@ -1,16 +1,22 @@
 /*** PACKAGES ***/
 import CompressionPlugin from 'compression-webpack-plugin'
-import dotenv from 'dotenv'
+import Dotenv from 'dotenv-webpack'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
 import HTMLWebpackPlugin from 'html-webpack-plugin'
 import webpack from 'webpack'
 import nodeExternals from 'webpack-node-externals'
 
 /*** TOOLS ***/
-dotenv.load()
 const PROD = process.env.NODE_ENV === 'production'
 
 /*** COMMON CONFIGURATIONS ***/
+const dotEnvConfig = new Dotenv({
+  path: __dirname + '/.env',
+  //  systemvars: true,
+  silent: false
+  //  safe: true,
+})
+
 const nodeConfig = {
   //console: false,
   //global: false,
@@ -165,7 +171,9 @@ const server = {
   target: 'node',
   //  node: nodeConfig,
   externals: [nodeExternals()],
-  plugins: PROD ? [defineConfig, compConfig, uglyConfig] : [defineConfig]
+  plugins: PROD
+    ? [dotEnvConfig, defineConfig, compConfig, uglyConfig]
+    : [dotEnvConfig, defineConfig]
 }
 
 export default [client, server]
