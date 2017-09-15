@@ -53,15 +53,15 @@ app.use('/', (req, res) => {
 })
 
 /*** WEB SOCKETS ***/
-import http from 'http'
+/*import http from 'http'
 const server = http.createServer(app)
 import socket from 'socket.io'
 const io = socket(server)
 import ioEvents from './routes/io.server.js'
 ioEvents(io)
-
+*/
 /*** SERVE ***/
 const port = process.env.PORT || 8080
-server.listen(port, () => {
+app.listen(port, () => {
   console.log('Server listening on port', port + '.')
 })
