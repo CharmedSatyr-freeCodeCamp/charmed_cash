@@ -2,8 +2,12 @@
 @import '_switch.scss';
 
 body {
+  background: $dark;
+  color: $light;
+  text-shadow: 1px 1px 1px #000000;
   font-family: sans-serif;
   font-weight: lighter;
+  margin: 5%;
 }
 
 a,
