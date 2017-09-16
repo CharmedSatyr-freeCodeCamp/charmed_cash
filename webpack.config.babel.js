@@ -31,14 +31,9 @@ const nodeConfig = {
   fs: 'empty'
 }
 
-const defineConfig = new webpack.DefinePlugin({
-  'process.env': {
-    NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-    PORT: JSON.stringify(process.env.PORT),
-    API_KEY: JSON.stringify(process.env.API_KEY),
-    PRIVATE_KEY: JSON.stringify(process.env.PRIVATE_KEY),
-    MONGO_URI: JSON.stringify(process.env.MONGO_URI)
-  }
+//This loads the value INTO the code. Don't use for sensitive information.
+const environmentConfig = new webpack.EnvironmentPlugin({
+  NODE_ENV: 'development' //Use 'development' unless process.env.NODE_ENV is found
 })
 
 const compConfig = new CompressionPlugin({
@@ -131,7 +126,7 @@ const client = {
         new ExtractTextPlugin({
           filename: 'styles/[name]+[sha256:contenthash:base64:5].min.css'
         }),
-        defineConfig,
+        environmentConfig,
         uglyConfig,
         compConfig
       ]
@@ -145,7 +140,7 @@ const client = {
         new ExtractTextPlugin({
           filename: 'styles/[name]+[sha256:contenthash:base64:5].css'
         }),
-        defineConfig
+        environmentConfig
       ]
 }
 
@@ -173,8 +168,8 @@ const server = {
   //  node: nodeConfig,
   externals: [nodeExternals()],
   plugins: PROD
-    ? [/*dotEnvConfig, */ defineConfig, compConfig, uglyConfig]
-    : [/*dotEnvConfig, */ defineConfig]
+    ? [/*dotEnvConfig, */ environmentConfig, compConfig, uglyConfig]
+    : [/*dotEnvConfig, */ environmentConfig]
 }
 
 export default [client, server]
