@@ -165,7 +165,7 @@ export default class App extends Component {
     clientFuncsWS.chartDataWS(async result => {
       const chartArr = await result.map(item => {
         return [common.prettyTickers(item.name), item.data]
-      })
+      }).sort() //This sort ensures the chart Legend is in ABC order
       //Chart the data
       this.setState({ chartArr: chartArr, loading: 'Ready' })
     })
