@@ -35,8 +35,13 @@ export default class App extends Component {
   /* Task runner updates tickers, toggles, and displays from getTickers info */
   setTickers(tickers) {
     let set = new Promise((resolve, reject) => {
+      let t = tickers
+        .split(',')
+        .sort()
+        .join()
+      console.log('t', t)
       this.setState({
-        tickers: tickers
+        tickers: t
       })
       resolve(tickers)
     })
@@ -88,7 +93,7 @@ export default class App extends Component {
   makeToggles() {
     //Create the toggles
     //Baked in pairs
-    const bakedIn = 'XXBTZUSD,XETHZUSD,XZECZUSD'
+    const bakedIn = 'XETHZUSD,XXBTZUSD,XZECZUSD'
     //Dynamic pairs
     const dynamic = this.state.tickers
     //Both
@@ -96,7 +101,7 @@ export default class App extends Component {
     dynamic.length > 0
       ? (complete = bakedIn + ',' + dynamic)
       : (complete = bakedIn)
-    let c = complete.split(',')
+    let c = complete.split(',').sort()
     //Deduplicate
     c = common.uniq(c)
     //Make the toggleArr
@@ -186,11 +191,12 @@ export default class App extends Component {
           </a>
         </h3>
         <p>
-          *The Kraken API doesn't provide straightforward access to historical
-          data, so the graphs here are of data accumulated in the database and
-          may not be accurate. Note, however, that because the client and server
-          communicate almost entirely via websockets, any tickers you add to the
-          display will immediately appear on other devices.
+          *Because the client and server communicate almost entirely via
+          websockets, any tickers you add to the display will immediately appear
+          on other devices. However, I learned (too late) that the Kraken API
+          doesn't provide straightforward access to historical data, so the
+          graphs here represent data accumulated by the server and may not
+          accurately reflect price dynamics through time.
         </p>
         <h3>
           Currently following: {this.state.tickers.split(',').join(', ')}

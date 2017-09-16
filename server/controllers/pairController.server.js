@@ -147,7 +147,7 @@ const getTickersWS = (message1, message2, socket) => {
         const pairNames = result.map(item => {
           return item.name
         })
-        socket.emit(message1, pairNames.join())
+        socket.emit(message1, pairNames.sort().join())
         socket.emit(message2)
       })
     }, interval)
