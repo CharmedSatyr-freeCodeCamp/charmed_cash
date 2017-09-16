@@ -26,10 +26,8 @@ export default class Toggle extends Component {
   }
   render() {
     return (
-      <div>
-        <span>
-          {common.prettyTickers(this.props.pair)}
-        </span>
+      <div className="toggleContainer">
+        <span>{common.prettyTickers(this.props.pair)}</span>
         <Switch on={this.props.on} onClick={this.toggleSwitch} />
       </div>
     )

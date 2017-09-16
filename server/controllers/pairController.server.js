@@ -138,7 +138,10 @@ const removeTickerWS = (message, socket) => {
      * This function also updates the Next Update timer on the view.       */
 const getTickersWS = (message1, message2, socket) => {
   socket.on(message1, interval => {
-    console.log('Client refreshing pair names with interval', interval)
+    //  console.log(
+    //      'Client refreshing pair names with interval',
+    //  interval / 60 + 'seconds.'
+    //)
     setInterval(() => {
       Pair.find((err, result) => {
         if (err) {

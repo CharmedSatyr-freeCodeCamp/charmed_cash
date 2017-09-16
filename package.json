@@ -13,6 +13,7 @@
     "build": "webpack --config webpack.config.babel.js",
     "watch:server": "nodemon server/server.js --exec babel-node --presets env",
     "watch:client": "webpack --watch --config webpack.config.babel.js",
+    "dev:client": "react-dev-server",
     "clean": "rm -rf ./dist"
   },
   "repository": {

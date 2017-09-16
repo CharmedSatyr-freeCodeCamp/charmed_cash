@@ -2,12 +2,32 @@
 @import '_switch.scss';
 
 body {
-  background: $dark;
+  background: $gray;
   color: $light;
-  text-shadow: 1px 1px 1px #000000;
   font-family: sans-serif;
   font-weight: lighter;
-  margin: 5%;
+  text-shadow: 1px 1px 1px #000000;
+}
+
+header {
+  background: $dark;
+  height: 180px;
+  margin: 0;
+  left: 0;
+  padding: 15px;
+  position: absolute;
+  top: 0;
+  width: 100vw;
+}
+
+.chart {
+  margin: 0 10vw 0 10vw;
+}
+
+main {
+  margin-top: 225px;
+  padding-left: 11px;
+  padding-right: 11px;
 }
 
 a,
@@ -15,4 +35,13 @@ a:hover,
 a:visited {
   color: $blue;
   text-decoration: none;
+}
+
+.toggleContainer {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 5px;
+  padding: 5px;
+  width: 160px;
 }

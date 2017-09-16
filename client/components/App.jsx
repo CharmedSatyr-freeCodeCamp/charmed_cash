@@ -163,9 +163,11 @@ export default class App extends Component {
     this.setState({ loading: 'Drawing chart...' })
     //Get data points for chart
     clientFuncsWS.chartDataWS(async result => {
-      const chartArr = await result.map(item => {
-        return [common.prettyTickers(item.name), item.data]
-      }).sort() //This sort ensures the chart Legend is in ABC order
+      const chartArr = await result
+        .map(item => {
+          return [common.prettyTickers(item.name), item.data]
+        })
+        .sort() //This sort ensures the chart Legend is in ABC order
       //Chart the data
       this.setState({ chartArr: chartArr, loading: 'Ready' })
     })
@@ -175,29 +177,11 @@ export default class App extends Component {
     this.getTickers() //Boot up
   }
   componentDidMount() {
-    this.setState({ loading: 'Component mounted, awaiting tickers...' })
-  }
-  shouldComponentUpdate(nextProps, nextState) {
-    return true
+    this.setState({ loading: 'Welcome to Charmed Cash! Awaiting tickers...' })
   }
   render() {
     return (
-      <div>
-        <h1>Charmed Cash</h1>
-        <h3>
-          a realtime* digital currency ticker tracker | data from{' '}
-          <a href="https://kraken.com/" target="_blank">
-            Kraken.com
-          </a>
-        </h3>
-        <p>
-          *Because the client and server communicate almost entirely via
-          websockets, any tickers you add to the display will immediately appear
-          on other devices. However, I learned (too late) that the Kraken API
-          doesn't provide straightforward access to historical data, so the
-          graphs here represent data accumulated by the server and may not
-          accurately reflect price dynamics through time.
-        </p>
+      <main>
         <h3>
           Currently following: {this.state.tickers.split(',').join(', ')}
           <br />
@@ -205,7 +189,9 @@ export default class App extends Component {
           <br />
           <Next fn={this.chartData} />
         </h3>
-        <HighchartsJS data={this.state.chartArr} />
+        <div className="chart">
+          <HighchartsJS data={this.state.chartArr} />
+        </div>
         <div>
           <label htmlFor="pairEntry">
             <h3>
@@ -227,7 +213,7 @@ export default class App extends Component {
           <h3>Or toggle a currency pair below: </h3>
           {this.state.toggleArr}
         </div>
-      </div>
+      </main>
     )
   }
 }

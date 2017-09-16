@@ -28,6 +28,23 @@
    	  width: 100%;
    	  z-index: 10;'>Please enable JavaScript. This site will not function properly without it.
     </noscript>
+    <header>
+      <h1>Charmed Cash</h1>
+      <h3>
+        a realtime* digital currency ticker tracker | data from
+        <a href="https://kraken.com/" target="_blank">
+          Kraken.com
+        </a>
+      </h3>
+      <p>
+        *Because the client and server communicate almost entirely via
+        websockets, any tickers you add to the display will immediately appear
+        on other devices. However, I learned (too late) that the Kraken API
+        doesn't provide straightforward access to historical data, so the
+        graphs here represent data accumulated by the server and may not
+        accurately reflect price dynamics through time.
+      </p>
+    </header>
 
 
  			<div id='app' >Loading...</div>
