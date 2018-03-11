@@ -1,12 +1,13 @@
 {
   "name": "chart_the_stock_market",
   "version": "1.0.0",
-  "description": "\"Chart the Stock Market\" is a project required for freeCodeCamp's Back End Development Certificate.",
+  "description":
+    "\"Chart the Stock Market\" is a project required for freeCodeCamp's Back End Development Certificate.",
   "main": "server.js",
   "engines": {
-    "node": "8.4.0",
-    "npm": "5.4.1",
-    "yarn": "1.0.2"
+    "node": ">= 8.4.0",
+    "npm": ">= 5.4.1",
+    "yarn": ">= 1.0.2"
   },
   "scripts": {
     "start": "npm-run-all --parallel watch:client watch:server",
@@ -20,15 +21,7 @@
     "type": "git",
     "url": "git+https://github.com/CharmedSatyr/chart_the_stock_market.git"
   },
-  "keywords": [
-    "MERN",
-    "freeCodeCamp",
-    "MongoDB",
-    "Express",
-    "React",
-    "Node",
-    "ES2017"
-  ],
+  "keywords": ["MERN", "freeCodeCamp", "MongoDB", "Express", "React", "Node", "ES2017"],
   "author": "CharmedSatyr",
   "license": "GPL-3.0",
   "bugs": {
